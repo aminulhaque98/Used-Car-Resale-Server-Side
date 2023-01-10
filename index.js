@@ -22,12 +22,14 @@ async function run() {
 
         const uesdCarResaleCollection = client.db('nationWideCarResale').collection('categories');
 
+        const uesdCarResaleBooking = client.db('nationWideCarResale').collection('bookings');
+
 
         app.get('/products', async (req, res) => {
             const query = {};
             const products = await uesdCarResaleProducts.find(query).toArray();
             res.send(products);
-        })
+        });
 
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
@@ -41,6 +43,12 @@ async function run() {
             const query = {};
             const options = await uesdCarResaleCollection.find(query).toArray();
             res.send(options);
+        });
+
+        app.post('/bookings', async(req,res)=>{
+            const book =req.body;
+            const result = await uesdCarResaleBooking.insertOne(book);
+            res.send(result);
         })
 
     }
