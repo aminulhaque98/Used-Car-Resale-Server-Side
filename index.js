@@ -13,7 +13,6 @@ app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.tg7jnth.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
@@ -23,7 +22,21 @@ async function run() {
 
         const uesdCarResaleCollection = client.db('nationWideCarResale').collection('categories');
 
-        
+
+        app.get('/products', async (req, res) => {
+            const query = {};
+            const products = await uesdCarResaleProducts.find(query).toArray();
+            res.send(products);
+        })
+
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { category_id: id };
+            const product = await uesdCarResaleProducts.find(query).toArray();
+            res.send(product);
+
+        });
+
         app.get('/categories', async (req, res) => {
             const query = {};
             const options = await uesdCarResaleCollection.find(query).toArray();
