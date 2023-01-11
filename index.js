@@ -43,11 +43,20 @@ async function run() {
         const carResaleUsersCollection = client.db('nationWideCarResale').collection('users');
 
 
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await carResaleProductsCollection.insertOne(product);
+            res.send(result);
+            console.log(result)
+        });
+
+
         app.get('/products', async (req, res) => {
             const query = {};
             const products = await carResaleProductsCollection.find(query).toArray();
             res.send(products);
         });
+
 
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
@@ -92,10 +101,38 @@ async function run() {
             res.status(403).send({ accessToken: "" })
         });
 
+        //get all users
         app.get('/users', async (req, res) => {
             const query = {};
             const allUsers = await carResaleUsersCollection.find(query).toArray();
             res.send(allUsers);
+        });
+
+        // get buyer user
+
+        // app.get('/users/buyer', async (req, res) => {
+        //     const Buyer = req.params.Buyer;
+        //     const query = { role: Buyer };
+        //     const allBuyer = await carResaleUsersCollection.find(query).toArray();
+        //     res.send(allBuyer);
+        //     console.log(buyer)
+        // });
+
+        app.get('/users/buyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await carResaleUsersCollection.find(query);
+            res.send({ isBuyer: user?.role === 'Buyer' })
+        });
+
+
+
+        //get admin user
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await carResaleUsersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'Admin' })
         });
 
 
@@ -114,7 +151,6 @@ async function run() {
             if (user?.role !== 'Admin') {
                 return res.status(403).send({ message: 'forbidden access' })
             }
-
 
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
