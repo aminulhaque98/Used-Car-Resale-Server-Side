@@ -23,6 +23,7 @@ async function run() {
         const uesdCarResaleCollection = client.db('nationWideCarResale').collection('categories');
 
         const uesdCarResaleBooking = client.db('nationWideCarResale').collection('bookings');
+        const uesdCarResaleUsers = client.db('nationWideCarResale').collection('users');
 
 
         app.get('/products', async (req, res) => {
@@ -49,7 +50,20 @@ async function run() {
             const book =req.body;
             const result = await uesdCarResaleBooking.insertOne(book);
             res.send(result);
-        })
+        });
+
+        app.get('/bookings', async (req,res)=>{
+            const email=req.query.email;
+            const query = {email:email};
+            const bookings = await uesdCarResaleBooking.find(query).toArray();
+            res.send(bookings);
+        });
+
+app.post('/users',async(req,res)=>{
+    const user=req.body;
+    const result = await uesdCarResaleUsers.insertOne(user);
+    res.send(result);
+})
 
     }
     finally {
