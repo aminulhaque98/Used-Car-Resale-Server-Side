@@ -91,6 +91,12 @@ async function run() {
             console.log(user);
             res.status(403).send({accessToken: ""})
         });
+        
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const allUsers = await carResaleUsersCollection.find(query).toArray();
+            res.send(allUsers);
+        });
 
           app.post('/users',async(req,res)=>{
            const user=req.body;
