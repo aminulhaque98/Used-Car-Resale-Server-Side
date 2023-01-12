@@ -42,7 +42,10 @@ async function run() {
 
         const carResaleCategoryCollection = client.db('nationWideCarResale').collection('categories');
 
+        const carResalePaymentCollection = client.db('nationWideCarResale').collection('payments');
+
         const carResaleBookingCollection = client.db('nationWideCarResale').collection('bookings');
+
         const carResaleUsersCollection = client.db('nationWideCarResale').collection('users');
 
 
@@ -120,6 +123,22 @@ async function run() {
             res.send({
                 clientSecret: paymentIntent.client_secret,
             });
+        });
+
+        app.post('/payments', async (req, res) => {
+            const payment = req.body;
+            const result = await carResalePaymentCollection.insertOne(payment);
+            const id = payment.bookingId;
+            const filter = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId,
+                }
+            }
+            const updatedResult = await carResaleBookingCollection.updateOne(filter, updatedDoc)
+            res.send(result);
+
         })
 
         app.get('/jwt', async (req, res) => {
