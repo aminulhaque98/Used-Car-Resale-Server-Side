@@ -48,7 +48,7 @@ async function run() {
 
         const carResaleUsersCollection = client.db('nationWideCarResale').collection('users');
 
-
+        // create products
         app.post('/products', async (req, res) => {
             const product = req.body;
             const result = await carResaleProductsCollection.insertOne(product);
@@ -56,14 +56,14 @@ async function run() {
             console.log(result)
         });
 
-
+        //find all products
         app.get('/products', async (req, res) => {
             const query = {};
             const products = await carResaleProductsCollection.find(query).toArray();
             res.send(products);
         });
 
-
+        //find all products by category
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { category_id: id };
@@ -72,20 +72,30 @@ async function run() {
 
         });
 
+        //wishlish products
 
+        // app.get('/products/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const product = await carResaleProductsCollection.findOne(query);
+        //     res.send(product);
+        //     console.log(product)
+        // });
 
-
+        //All Category
         app.get('/categories', async (req, res) => {
             const query = {};
             const options = await carResaleCategoryCollection.find(query).toArray();
             res.send(options);
         });
 
+        //bookings
         app.post('/bookings', async (req, res) => {
             const book = req.body;
             const result = await carResaleBookingCollection.insertOne(book);
             res.send(result);
         });
+
 
         app.get('/bookings/:id', async (req, res) => {
             const id = req.params.id;
@@ -95,7 +105,7 @@ async function run() {
         });
 
 
-
+        //booking verify within jwt
         app.get('/bookings', verifyJWT, async (req, res) => {
             const email = req.query.email;
             const decodedEmail = req.decoded.email;
@@ -107,7 +117,7 @@ async function run() {
             res.send(bookings);
         });
 
-
+        // create payment mathode
         app.post('/create-payment-intent', async (req, res) => {
             const booking = req.body;
             const price = booking.price;
@@ -125,6 +135,7 @@ async function run() {
             });
         });
 
+        //create payments db 
         app.post('/payments', async (req, res) => {
             const payment = req.body;
             const result = await carResalePaymentCollection.insertOne(payment);
@@ -141,6 +152,7 @@ async function run() {
 
         })
 
+        //jwt token
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
@@ -160,22 +172,22 @@ async function run() {
             res.send(allUsers);
         });
 
-        //Buyer
-        app.get('/users/seller/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email };
-            const user = await carResaleUsersCollection.find(query);
-            res.send({ isSeller: user?.role === 'Seller' });
-        });
 
-
-
-        //get admin user
+        //Get protective Admin user
         app.get('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email };
             const user = await carResaleUsersCollection.findOne(query);
             res.send({ isAdmin: user?.role === 'Admin' })
+        });
+
+
+        // Get protective Buyer user
+        app.get('/users/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await carResaleUsersCollection.findOne(query);
+            res.send({ isSeller: user?.role === 'Seller' });
         });
 
 
@@ -207,7 +219,7 @@ async function run() {
             res.send(result);
         });
 
-
+        //delete user 
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
