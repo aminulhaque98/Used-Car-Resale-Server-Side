@@ -132,6 +132,14 @@ async function run() {
             res.send(wishlist);
         });
 
+        //delete wishlist 
+        app.delete('/wishlist/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await carResaleWishlistCollection.deleteOne(query);
+            res.send(result);
+        })
+
 
 
         // create payment mathode
@@ -256,6 +264,8 @@ async function run() {
             const result = await carResaleUsersCollection.deleteOne(query);
             res.send(result);
         })
+
+
 
     }
     finally {
