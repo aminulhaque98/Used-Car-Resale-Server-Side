@@ -40,6 +40,8 @@ async function run() {
     try {
         const carResaleProductsCollection = client.db('nationWideCarResale').collection('products');
 
+        const carResaleWishlistCollection = client.db('nationWideCarResale').collection('wishlist');
+
         const carResaleCategoryCollection = client.db('nationWideCarResale').collection('categories');
 
         const carResalePaymentCollection = client.db('nationWideCarResale').collection('payments');
@@ -72,15 +74,7 @@ async function run() {
 
         });
 
-        //wishlish products
 
-        // app.get('/products/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const query = { _id: ObjectId(id) };
-        //     const product = await carResaleProductsCollection.findOne(query);
-        //     res.send(product);
-        //     console.log(product)
-        // });
 
         //All Category
         app.get('/categories', async (req, res) => {
@@ -96,7 +90,7 @@ async function run() {
             res.send(result);
         });
 
-
+        //get selected bookings
         app.get('/bookings/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -116,6 +110,16 @@ async function run() {
             const bookings = await carResaleBookingCollection.find(query).toArray();
             res.send(bookings);
         });
+
+
+        //make wishlist
+        app.post('/wishlist', async (req, res) => {
+            const wish = req.body;
+            const result = await carResaleWishlistCollection.insertOne(wish);
+            res.send(result);
+        });
+
+
 
         // create payment mathode
         app.post('/create-payment-intent', async (req, res) => {
@@ -171,6 +175,19 @@ async function run() {
             const allUsers = await carResaleUsersCollection.find(query).toArray();
             res.send(allUsers);
         });
+
+
+        //buyers
+        // app.get('/users/:Buyer', async (req, res) => {
+        //     const buyer = req.params.Buyer;
+        //     console.log(buyer);
+        //     const query = { role: buyer };
+        //     const allBuyers = await carResaleUsersCollection.find(query).toArray();
+        //     res.send(allBuyers);
+        //     console.log(allBuyers);
+        // });
+
+
 
 
         //Get protective Admin user
