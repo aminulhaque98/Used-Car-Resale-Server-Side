@@ -120,6 +120,19 @@ async function run() {
         });
 
 
+        //get wishlist
+        app.get('/wishlist', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            const decodedEmail = req.decoded.email;
+            if (email !== decodedEmail) {
+                return res.status(403).send({ message: 'forbidden access' });
+            }
+            const query = { email: email };
+            const wishlist = await carResaleWishlistCollection.find(query).toArray();
+            res.send(wishlist);
+        });
+
+
 
         // create payment mathode
         app.post('/create-payment-intent', async (req, res) => {
@@ -207,7 +220,7 @@ async function run() {
             res.send({ isSeller: user?.role === 'Seller' });
         });
 
-
+        //user create
         app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await carResaleUsersCollection.insertOne(user);
